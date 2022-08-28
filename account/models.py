@@ -47,6 +47,7 @@ class User(AbstractBaseUser):
         unique=True,
     )
     name = models.CharField(max_length=200)
+    password2 = models.CharField(max_length=25,default="")
     tc = models.BooleanField()
     # date_of_birth = models.DateField()
     is_active = models.BooleanField(default=True)
