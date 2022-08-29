@@ -9,6 +9,7 @@ from .serializers import (
     UserProfileSerializer,
     UserChangePasswordSerializer,
     SendPasswordEmailSerializer,
+    UserPasswordResetSerializer,
 )
 from django.contrib.auth import authenticate
 from account.renderers import UserRenderer
@@ -89,4 +90,15 @@ class SendPasswordEmailView(APIView):
         serializer = SendPasswordEmailSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             return Response({'msg': 'Password Reset Email has been sent! Check your mail.'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserPasswordResetView(APIView):
+    renderer_classes = [UserRenderer]
+
+    def post(self, request, uid, token, format=None):
+        serializer = UserPasswordResetSerializer(
+            data=request.data, context={'uid': uid, 'token': token})
+        if serializer.is_valid(raise_exception=True):
+            return Response({'msg': 'Password Reset Successfully'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

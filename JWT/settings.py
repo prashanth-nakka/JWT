@@ -182,3 +182,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://localhost:3000",
     "https://127.0.0.1:3000",
 ]
+
+
+# PASSWORD RESET TIMEOUT
+# Email Token is valid upto 15 min's
+PASSWORD_RESET_TIMEOUT = 900  # 900 sec's => 15 min's
