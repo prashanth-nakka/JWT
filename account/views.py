@@ -8,6 +8,7 @@ from .serializers import (
     UserRegistrationSerializer,
     UserProfileSerializer,
     UserChangePasswordSerializer,
+    SendPasswordEmailSerializer,
 )
 from django.contrib.auth import authenticate
 from account.renderers import UserRenderer
@@ -78,4 +79,14 @@ class UserChangePasswordView(APIView):
             data=request.data, context={'user': request.user})
         if serializer.is_valid(raise_exception=True):
             return Response({'msg': 'Password Changed Successfully!'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SendPasswordEmailView(APIView):
+    renderer_classes = [UserRenderer]
+
+    def post(self, request, format=None):
+        serializer = SendPasswordEmailSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            return Response({'msg': 'Password Reset Email has been sent! Check your mail.'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
