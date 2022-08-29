@@ -6,7 +6,18 @@ from .models import User
 from .serializers import UserLoginSerializer, UserRegistrationSerializer
 from django.contrib.auth import authenticate
 from account.renderers import UserRenderer
+from rest_framework_simplejwt.tokens import RefreshToken
 # Create your views here.
+
+# Generate token manually
+
+
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+    return{
+        'refresh': str(refresh),
+        'access': str(refresh.access_token)
+    }
 
 
 class UserRegistrationView(APIView):
@@ -16,7 +27,8 @@ class UserRegistrationView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
-            return Response({'msg': f'{user.name} Registered Successfully'}, status=status.HTTP_201_CREATED)
+            token = get_tokens_for_user(user)
+            return Response({'token': token, 'msg': f'{user.name} Registered Successfully'}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -34,7 +46,8 @@ class UserLoginView(APIView):
             user = authenticate(email=email, password=password)
             print(user)
             if user is not None:
-                return Response({"msg": "Login Success!"}, status=status.HTTP_200_OK)
+                token = get_tokens_for_user(user)
+                return Response({"token": token, "msg": "Login Success!"}, status=status.HTTP_200_OK)
             else:
                 return Response({'erorr': {'non_field_erros': ['Email or Password is not Valid!']}}, status=status.HTTP_404_NOT_FOUND)
 
