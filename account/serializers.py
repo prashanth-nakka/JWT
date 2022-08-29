@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import User
 from django.utils.encoding import (
-    smart_bytes,
     smart_str,
     force_bytes,
     DjangoUnicodeDecodeError
