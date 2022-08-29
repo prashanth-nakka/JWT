@@ -5,10 +5,13 @@ from rest_framework.views import APIView
 from .models import User
 from .serializers import UserLoginSerializer, UserRegistrationSerializer
 from django.contrib.auth import authenticate
+from account.renderers import UserRenderer
 # Create your views here.
 
 
 class UserRegistrationView(APIView):
+    renderer_classes = [UserRenderer]
+
     def post(self, request, format=None):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -19,6 +22,8 @@ class UserRegistrationView(APIView):
 
 
 class UserLoginView(APIView):
+    renderer_classes = [UserRenderer]
+
     def post(self, request, format=None):
         serializer = UserLoginSerializer(data=request.data)
         print(serializer)
@@ -32,5 +37,5 @@ class UserLoginView(APIView):
                 return Response({"msg": "Login Success!"}, status=status.HTTP_200_OK)
             else:
                 return Response({'erorr': {'non_field_erros': ['Email or Password is not Valid!']}}, status=status.HTTP_404_NOT_FOUND)
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
